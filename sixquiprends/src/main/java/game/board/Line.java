@@ -29,7 +29,7 @@ public class Line {
 	}
 
 	public boolean isFinished() {
-		return cards.size() >= 6;
+		return cards.size() >= 5;
 	}
 
 	public Set<Card> getCards(Card c) {
