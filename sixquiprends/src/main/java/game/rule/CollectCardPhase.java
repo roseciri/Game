@@ -14,15 +14,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class CollectCardPhase  {
+public class CollectCardPhase {
 
 	private static final Logger logger = LoggerFactory.getLogger(CollectCardPhase.class);
 
-	final PlayerList playerlist;
+	private final PlayerList playerlist;
 	Map<Player, Card> payload = new HashMap<>();
 
-	private ReentrantLock pauseLock = new ReentrantLock();
-	private Condition reactive = pauseLock.newCondition();
+	private final ReentrantLock pauseLock = new ReentrantLock();
+	private final Condition reactive = pauseLock.newCondition();
 	ExecutorService executor;
 
 	public CollectCardPhase(Tour tour) {
@@ -32,7 +32,7 @@ public class CollectCardPhase  {
 	public void start() {
 		Set<Player> players = playerlist.getPlayers();
 		executor = Executors.newFixedThreadPool(playerlist.getPlayersNumber());
-		players.forEach(p -> executor.submit(()-> p.selectCard(this)) );
+		players.forEach(p -> executor.submit(() -> p.selectCard(this)));
 	}
 
 	public Map<Player, Card> getPayload() {
@@ -43,7 +43,7 @@ public class CollectCardPhase  {
 			}
 			executor.shutdown();
 		} catch (InterruptedException e) {
-			logger.error("Le trhead a été interrompu",e);
+			logger.error("Le trhead a été interrompu", e);
 			Thread.currentThread().interrupt();
 		} finally {
 			pauseLock.unlock();

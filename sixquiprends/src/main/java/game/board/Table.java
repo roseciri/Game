@@ -7,9 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
 
 public class Table {
@@ -25,22 +22,12 @@ public class Table {
 	public Set<Card> addCard(Player p, Card c) {
 		Optional<Line> line = selectLineToAdd(c);
 		if (line.isEmpty()) {
-			FutureTask<Line> task = new FutureTask<>(() -> {
-				var selectionLinePhase = new SelectionLinePhase();
-				p.selectLine(selectionLinePhase, lines);
-				return selectionLinePhase.getLine();
-			});
-			var executorService = Executors.newSingleThreadExecutor();
-			executorService.submit(task);
+			var selectionLinePhase = new SelectionLinePhase(p, lines);
+			selectionLinePhase.start();
 			p.getHand().remove(c);
-			try {
-				Set<Card> cards = task.get().getCards(c);
-				executorService.shutdown();
-				return cards;
-			} catch (InterruptedException | ExecutionException e) {
-				logger.atWarn().setCause(e).log("Interrupted!");
-				Thread.currentThread().interrupt();
-			}
+			Set<Card> cards = selectionLinePhase.getLine().getCards(c);
+			logger.atDebug().log("reinit la ligne");
+			return cards;
 		}
 		p.getHand().remove(c);
 		return line.stream()
