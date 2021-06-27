@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
-
-import static java.lang.Thread.sleep;
 
 public class Table {
 
@@ -24,20 +24,23 @@ public class Table {
 
 	public Set<Card> addCard(Player p, Card c) {
 		Optional<Line> line = selectLineToAdd(c);
-		var selectionLinePhase = new SelectionLinePhase();
 		if (line.isEmpty()) {
-			Executors.newSingleThreadExecutor().submit(() -> p.selectLine(selectionLinePhase, lines));
-			while (selectionLinePhase.getLine() == null) {
-				try {
-					//noinspection BusyWait
-					sleep(10);
-				} catch (InterruptedException e) {
-					logger.error("Le thread a été interrompu", e);
-					Thread.currentThread().interrupt();
-				}
-			}
+			FutureTask<Line> task = new FutureTask<>(() -> {
+				var selectionLinePhase = new SelectionLinePhase();
+				p.selectLine(selectionLinePhase, lines);
+				return selectionLinePhase.getLine();
+			});
+			var executorService = Executors.newSingleThreadExecutor();
+			executorService.submit(task);
 			p.getHand().remove(c);
-			return selectionLinePhase.getLine().getCards(c);
+			try {
+				Set<Card> cards = task.get().getCards(c);
+				executorService.shutdown();
+				return cards;
+			} catch (InterruptedException | ExecutionException e) {
+				logger.atWarn().setCause(e).log("Interrupted!");
+				Thread.currentThread().interrupt();
+			}
 		}
 		p.getHand().remove(c);
 		return line.stream()

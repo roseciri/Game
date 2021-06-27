@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,6 +23,7 @@ public class CollectCardPhase  {
 
 	private ReentrantLock pauseLock = new ReentrantLock();
 	private Condition reactive = pauseLock.newCondition();
+	ExecutorService executor;
 
 	public CollectCardPhase(Tour tour) {
 		this.playerlist = tour.getPlayerList();
@@ -29,7 +31,8 @@ public class CollectCardPhase  {
 
 	public void start() {
 		Set<Player> players = playerlist.getPlayers();
-		players.forEach(p -> Executors.newSingleThreadExecutor().submit(()-> p.selectCard(this)) );
+		executor = Executors.newFixedThreadPool(playerlist.getPlayersNumber());
+		players.forEach(p -> executor.submit(()-> p.selectCard(this)) );
 	}
 
 	public Map<Player, Card> getPayload() {
@@ -38,6 +41,7 @@ public class CollectCardPhase  {
 			while (!payload.keySet().containsAll(playerlist.getPlayers())) {
 				reactive.await();
 			}
+			executor.shutdown();
 		} catch (InterruptedException e) {
 			logger.error("Le trhead a été interrompu",e);
 			Thread.currentThread().interrupt();

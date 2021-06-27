@@ -44,6 +44,7 @@ public class Player {
 		communicator.selectLine(c -> selectionLinePhase.select(lines.get(0)));
 	}
 
+
 	public String getName() {
 		return name;
 	}
