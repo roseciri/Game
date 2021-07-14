@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="main.one" level="DEBUG"/>
+    <logger name="main.event" level="DEBUG"/>
 
     <root level="TRACE">
         <appender-ref ref="STDOUT" />

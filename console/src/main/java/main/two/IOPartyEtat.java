@@ -3,6 +3,7 @@ package main.two;
 import exception.NotEnoughtCardException;
 import game.io.*;
 import game.player.Player;
+import state.ActionImpossibleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

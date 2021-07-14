@@ -41,7 +41,7 @@ public class Party {
 		try {
 			communicator.needPlayer(this::addPlayer);
 		} catch (NotEnoughtCardException e) {
-			throw new TecnicalException("La pioche ne devrait pas être vide au lancement");
+			throw new TecnicalException("La pioche ne devrait pas être vide au lancement", e);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class Party {
 	public void play() {
 		for (var i = 1; i <= 10; i++) {
 			new Tour(this).start();
-			logger.atDebug().log(playerList.displayScore());
+			//logger.atDebug().log(playerList.displayScore());
 		}
 	}
 
@@ -94,7 +94,7 @@ public class Party {
 
 	public Collection<Card> addCard(Player p, Card c) {
 		Set<Card> cards = table.addCard(p, c);
-		logger.atDebug().log(table.toString());
+		//logger.atDebug().log(table.toString());
 		return cards;
 	}
 

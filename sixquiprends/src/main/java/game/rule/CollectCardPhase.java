@@ -43,7 +43,7 @@ public class CollectCardPhase {
 			}
 			executor.shutdown();
 		} catch (InterruptedException e) {
-			logger.error("Le trhead a été interrompu", e);
+			//logger.error("Le trhead a été interrompu", e);
 			Thread.currentThread().interrupt();
 		} finally {
 			pauseLock.unlock();

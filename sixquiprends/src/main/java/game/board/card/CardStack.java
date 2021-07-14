@@ -24,7 +24,7 @@ public class CardStack {
 			cardList.add(getRandom()% (cardList.size() + 1), createCards(i));
 		}
 		iterator = cardList.iterator();
-		logger.atDebug().log("init ok");
+		//logger.atDebug().log("init ok");
 	}
 
 

@@ -25,7 +25,7 @@ public class PlayerList {
 	}
 
 	public void playOneCard() {
-		logger.atDebug().log("playOneCard");
+		//logger.atDebug().log("playOneCard");
 	}
 
 	public Set<Player> getPlayers() {

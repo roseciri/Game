@@ -1,4 +1,4 @@
-package main.two;
+package state;
 
 public class ActionImpossibleException extends RuntimeException {
 
