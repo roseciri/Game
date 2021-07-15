@@ -27,4 +27,5 @@ public abstract class IOParty {
 	public String displayTable() {
 		return party.getTable().toString();
 	}
+
 }

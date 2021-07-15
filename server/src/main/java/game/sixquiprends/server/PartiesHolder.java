@@ -2,9 +2,11 @@ package game.sixquiprends.server;
 
 
 import exception.NotEnoughtCardException;
-import game.io.Action;
-import game.io.AddPlayerOrPlayAction;
-import game.io.GetPlayerAction;
+import game.board.Line;
+import game.board.card.Card;
+import game.io.*;
+import game.rule.CollectCardPhase;
+import game.rule.SelectionLinePhase;
 import state.ActionImpossibleException;
 
 import javax.inject.Singleton;
@@ -17,6 +19,7 @@ public class PartiesHolder {
 
 	Map<UUID, IOPartyWeb> parties = new HashMap<>();
 	Map<IOPartyWeb, Action> actions = new HashMap<>();
+	Map<IOPlayerWeb, Action> playerActions = new HashMap<>();
 
 
 	public UUID getNewParty() {
@@ -38,6 +41,35 @@ public class PartiesHolder {
 			((GetPlayerAction) action).addPlayer(playerName);
 		} else if (action instanceof AddPlayerOrPlayAction) {
 			((AddPlayerOrPlayAction) action).getAddPlayerAction().addPlayer(playerName);
+		} else {
+			throw new ActionImpossibleException();
+		}
+	}
+
+	public void start(UUID uuid) {
+		Action action = actions.get(parties.get(uuid));
+		if (action instanceof AddPlayerOrPlayAction) {
+			((AddPlayerOrPlayAction) action).getPlayAction().play();
+		} else {
+			throw new ActionImpossibleException();
+		}
+	}
+
+	public void playerSelectCard(UUID uuid, String playerId, int card) {
+		IOPlayerWeb ioPlayerWeb = parties.get(uuid).getIOPlayerWeb(playerId);
+		Action action = playerActions.get(ioPlayerWeb);
+		if (action instanceof GetCardAction) {
+			((GetCardAction) action).selectCard(card);
+		} else {
+			throw new ActionImpossibleException();
+		}
+	}
+
+	public void playerSelectLine(UUID uuid, String playerId, int line) {
+		IOPlayerWeb ioPlayerWeb = parties.get(uuid).getIOPlayerWeb(playerId);
+		Action action = playerActions.get(ioPlayerWeb);
+		if (action instanceof GetLineAction) {
+			((GetLineAction) action).selectLine(line);
 		} else {
 			throw new ActionImpossibleException();
 		}

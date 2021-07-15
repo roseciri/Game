@@ -9,8 +9,6 @@ import javax.inject.Inject;
 
 public class IOPlayerWeb extends IOPlayer {
 
-
-
 	public IOPlayerWeb(Player player, IOPartyWeb ioPartyWeb) {
 		super(player, ioPartyWeb);
 	}
@@ -25,5 +23,9 @@ public class IOPlayerWeb extends IOPlayer {
 	public void selectLine(GetLineAction action) {
 		String line = "1";
 		action.selectLine(Integer.parseInt(line));
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 }

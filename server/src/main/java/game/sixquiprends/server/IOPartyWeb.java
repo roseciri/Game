@@ -38,4 +38,8 @@ public class IOPartyWeb extends IOParty {
 		return ioPlayer;
 	}
 
+
+	public IOPlayerWeb getIOPlayerWeb(String playerId) {
+		return (IOPlayerWeb) playerCommunicator.get(playerId);
+	}
 }
