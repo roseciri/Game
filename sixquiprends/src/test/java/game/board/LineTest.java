@@ -16,7 +16,7 @@ class LineTest {
 		Card c3 = new Card(3, 0);
 		var l = new Line(c1);
 		l.addCard(c2);
-		Set<Card> cards = l.getCards(c3);
+		Set<Card> cards = l.replaceWith(c3);
 		Assertions.assertEquals(2, cards.size());
 		Assertions.assertTrue(cards.contains(c1));
 		Assertions.assertTrue(cards.contains(c2));

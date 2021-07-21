@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Table {
+public class Table implements BoardGameData {
 
 	private static final Logger logger = LoggerFactory.getLogger(Table.class);
 
@@ -25,7 +25,7 @@ public class Table {
 			var selectionLinePhase = new SelectionLinePhase(p, lines);
 			selectionLinePhase.start();
 			p.getHand().remove(c);
-			Set<Card> cards = selectionLinePhase.getLine().getCards(c);
+			Set<Card> cards = selectionLinePhase.getLine().replaceWith(c);
 			logger.atDebug().log("reinit la ligne");
 			return cards;
 		} else {
@@ -49,4 +49,9 @@ public class Table {
 						.collect(Collectors.joining("\n"))
 				+ "\n--------------------------\n";
 	}
+
+	public List<? extends LineData> getLines() {
+		return lines;
+	}
+
 }

@@ -1,6 +1,8 @@
 package game.sixquiprends.server;
 
 import exception.NotEnoughtCardException;
+import game.board.BoardGameData;
+import game.board.Table;
 import game.io.*;
 import game.player.Player;
 import game.rule.SelectionLinePhase;
@@ -74,5 +76,9 @@ public class IOPartyWeb extends IOParty<IOPlayerWeb> {
 
 	public Optional<GetLineAction> getSelectLineActionForPlayer(String playerId) {
 		return playerCommunicator.get(playerId).getSelectLineAction();
+	}
+
+	public BoardGameData getBordGame() {
+		return party.getTable();
 	}
 }

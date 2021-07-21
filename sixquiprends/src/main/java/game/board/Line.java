@@ -5,9 +5,10 @@ import game.board.card.Card;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Line {
+public class Line implements LineData {
 
 	List<Card> cards = new ArrayList<>();
+	//TODO valeur calculée, prendre plutot la valeur de la dernière carte !
 	int value;
 
 	public Line(Card c) {
@@ -24,7 +25,7 @@ public class Line {
 			addCardToEnd(c);
 			return Optional.empty();
 		} else {
-			return Optional.of(getCards(c));
+			return Optional.of(replaceWith(c));
 		}
 	}
 
@@ -32,11 +33,15 @@ public class Line {
 		return cards.size() >= 5;
 	}
 
-	public Set<Card> getCards(Card c) {
+	public Set<Card> replaceWith(Card c) {
 		Set<Card> result = new HashSet<>(cards);
 		cards = new ArrayList<>();
 		addCardToEnd(c);
 		return result;
+	}
+
+	public List<Card> getCards() {
+		return cards;
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package game.board.card;
 
 import java.util.Objects;
 
-public class Card {
+public class Card implements CardData {
 
 	 private final int value;
 	 private final int cowsSum;
@@ -30,10 +30,12 @@ public class Card {
 		return Objects.hash(value);
 	}
 
+	@Override
 	public int getValue() {
 		return value;
 	}
 
+	@Override
 	public int getCowsSum() {
 		return cowsSum;
 	}

@@ -3,8 +3,10 @@ package game.sixquiprends.server.controller;
 import exception.NotEnoughtCardException;
 import game.io.GetPlayerAction;
 import game.io.PlayAction;
+import game.sixquiprends.server.IOPartyWeb;
 import game.sixquiprends.server.controller.error.RestMessageError;
 import game.sixquiprends.server.controller.holder.PartiesHolder;
+import game.sixquiprends.server.model.BordGame;
 import game.sixquiprends.server.model.Party;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,16 +51,17 @@ public class StarterController {
 
 	//TODO cette méthode doit retourner l'état de la table
 	@PostMapping(path = "/party/{partyId}/start")
-	public void startGame(@PathVariable String partyId) {
+	public BordGame startGame(@PathVariable String partyId) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("Lancement de la party %s", partyId));
 		}
-		partiesHolder.get(UUID.fromString(partyId)).getPlayAction().ifPresent(PlayAction::play);
-
+		IOPartyWeb ioPartyWeb = partiesHolder.get(UUID.fromString(partyId));
+		ioPartyWeb.getPlayAction().ifPresent(PlayAction::play);
+		return BordGame.builder().setBoardGameData(ioPartyWeb.getBordGame()).build();
 	}
 
 	//TODO cette méthode doit retourner le joueur, avec sa main
-	@PostMapping(path = "party/{partyId}/player")
+	@PostMapping(path = "party/{partyId}/player", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void addPlayer(@PathVariable String partyId, @RequestBody String name) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(String.format("[%s] Creation du joueur ", name));
