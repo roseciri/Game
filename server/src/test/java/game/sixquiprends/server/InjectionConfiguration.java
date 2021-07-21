@@ -1,5 +1,6 @@
 package game.sixquiprends.server;
 
+import game.sixquiprends.server.controller.holder.PartiesHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

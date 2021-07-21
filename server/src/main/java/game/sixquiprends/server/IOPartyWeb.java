@@ -1,45 +1,78 @@
 package game.sixquiprends.server;
 
 import exception.NotEnoughtCardException;
-import game.io.AddPlayerOrPlayAction;
-import game.io.GetPlayerAction;
-import game.io.IOParty;
-import game.io.IOPlayer;
+import game.io.*;
 import game.player.Player;
+import game.rule.SelectionLinePhase;
 
-public class IOPartyWeb extends IOParty {
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-	private PartiesHolder partiesHolder;
+public class IOPartyWeb extends IOParty<IOPlayerWeb> {
 
-	public IOPartyWeb(PartiesHolder partiesHolder) {
+	Optional<Action> actionOptional;
+
+
+	public IOPartyWeb() {
 		super();
-		this.partiesHolder = partiesHolder;
+		actionOptional = Optional.empty();
 	}
 
+	/******
+	 ***** Set actions From Party waiting player action
+	 *********/
 
-	public void needPlayer(GetPlayerAction action) {
-		partiesHolder.addAction(this, action);
+
+	public void needPlayer(GetPlayerAction a) {
+		actionOptional = Optional.of(a);
 	}
 
-	public void addPlayerOrPlay(AddPlayerOrPlayAction action) throws NotEnoughtCardException {
-		String choice = "add";
-		if ("add".equals(choice)) {
-			String name = "name";
-			action.getAddPlayerAction().addPlayer(name);
-		} else if ("play".equals(choice)) {
-			action.getPlayAction().play();
-		}
+	public void addPlayerOrPlay(AddPlayerOrPlayAction a) throws NotEnoughtCardException {
+		actionOptional = Optional.of(a);
 	}
 
 	@Override
-	public IOPlayer addPlayerCommunicator(Player player) {
-		IOPlayer ioPlayer = new IOPlayerWeb(player, this);
-		playerCommunicator.put(player.getName(), ioPlayer);
-		return ioPlayer;
+	public IOPlayerWeb addPlayerCommunicator(Player player) {
+		IOPlayerWeb ioPlayerWeb = new IOPlayerWeb(player, this);
+		playerCommunicator.put(player.getName(), ioPlayerWeb);
+		return ioPlayerWeb;
 	}
 
 
-	public IOPlayerWeb getIOPlayerWeb(String playerId) {
-		return (IOPlayerWeb) playerCommunicator.get(playerId);
+	public Optional<GetPlayerAction> getGetPlayerAction() {
+		return getAction(a -> {
+			if (a instanceof GetPlayerAction) {
+				return Optional.of((GetPlayerAction) a);
+			} else if (a instanceof AddPlayerOrPlayAction) {
+				return Optional.of(((AddPlayerOrPlayAction) a).getAddPlayerAction());
+			}
+			return Optional.empty();
+		});
+	}
+
+	public Optional<PlayAction> getPlayAction() {
+		return getAction(a -> {
+			if (a instanceof AddPlayerOrPlayAction) {
+				return Optional.of(((AddPlayerOrPlayAction) a).getPlayAction());
+			}
+			return Optional.empty();
+		});
+	}
+
+	private <T> Optional<T> getAction(Function<Action, Optional<T>> actionProvider){
+		if (actionOptional.isPresent()) {
+			return actionProvider.apply(actionOptional.get());
+		}
+		return Optional.empty();
+	}
+
+	public Optional<GetCardAction> getSelectCardActionForPlayer(String playerId) {
+		return playerCommunicator.get(playerId).getSelectCardAction();
+	}
+
+
+	public Optional<GetLineAction> getSelectLineActionForPlayer(String playerId) {
+		return playerCommunicator.get(playerId).getSelectLineAction();
 	}
 }

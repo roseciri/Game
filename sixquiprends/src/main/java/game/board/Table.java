@@ -28,12 +28,13 @@ public class Table {
 			Set<Card> cards = selectionLinePhase.getLine().getCards(c);
 			logger.atDebug().log("reinit la ligne");
 			return cards;
+		} else {
+			p.getHand().remove(c);
+			return line.stream()
+					.map(l -> l.addCard(c).orElse(Collections.emptySet()))
+					.flatMap(Collection::stream)
+					.collect(Collectors.toSet());
 		}
-		p.getHand().remove(c);
-		return line.stream()
-				.map(l -> l.addCard(c).orElse(Collections.emptySet()))
-				.flatMap(Collection::stream)
-				.collect(Collectors.toSet());
 	}
 
 	private Optional<Line> selectLineToAdd(Card c) {

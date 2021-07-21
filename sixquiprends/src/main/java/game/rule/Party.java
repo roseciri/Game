@@ -25,6 +25,7 @@ public class Party {
 	final PlayerList playerList = new PlayerList();
 	final CardStack cardStack = new CardStack();
 	private final Table table;
+
 	private IOParty communicator;
 
 	public Party(IOParty communicator) {
